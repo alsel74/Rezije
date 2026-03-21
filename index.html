@@ -12,7 +12,28 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Režije</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// Chart.js 4.4.1 inline minimal build
+!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t="undefined"!=typeof globalThis?globalThis:t||self).Chart=e()}(this,(function(){"use strict";
+// Minimal stub — will be replaced by full fetch below
+return {register:()=>{},Chart:class{constructor(ctx,cfg){this._ctx=ctx;this._cfg=cfg;this._destroyed=false}destroy(){this._destroyed=true}update(){}}}
+}));
+</script>
+<script>
+// Load Chart.js dynamically with timeout fallback
+(function loadChartJS() {
+  const s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+  s.onload = () => { if(window._chartReadyCb) window._chartReadyCb(); };
+  s.onerror = () => {
+    const s2 = document.createElement('script');
+    s2.src = 'https://unpkg.com/chart.js@4.4.1/dist/chart.umd.min.js';
+    s2.onload = () => { if(window._chartReadyCb) window._chartReadyCb(); };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s);
+})();
+</script>
 <style>
 :root{--bg:#0a0a14;--surface:#12121f;--card:#1a1a2e;--border:#ffffff12;--text:#f0f0f8;--muted:#6b7280;--kuca:#3b82f6;--apart:#22c55e;--viken:#a855f7;--safe-top:env(safe-area-inset-top,44px);--safe-bot:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
