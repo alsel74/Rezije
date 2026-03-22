@@ -302,7 +302,7 @@ const fS=n=>n.toLocaleString("bs-BA",{minimumFractionDigits:2,maximumFractionDig
 function toast(m,c="#1d4ed8"){const t=document.getElementById("toast");t.textContent=m;t.style.background=c;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);}
 
 let db;
-function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open("RezijePWA",1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains("store"))e.target.result.createObjectStore("store");};r.onsuccess=e=>{db=e.target.result;res();};r.onerror=rej;});}
+function openDB(){return new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error("DB timeout")),3000);const r=indexedDB.open("RezijePWA",1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains("store"))e.target.result.createObjectStore("store");};r.onsuccess=e=>{clearTimeout(t);db=e.target.result;res();};r.onerror=e=>{clearTimeout(t);rej(e);};});}
 function dbG(k){return new Promise((res,rej)=>{const r=db.transaction("store","readonly").objectStore("store").get(k);r.onsuccess=()=>res(r.result??null);r.onerror=rej;});}
 function dbS(k,v){return new Promise((res,rej)=>{const r=db.transaction("store","readwrite").objectStore("store").put(v,k);r.onsuccess=()=>res();r.onerror=rej;});}
 async function initApp(){
