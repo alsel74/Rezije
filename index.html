@@ -264,7 +264,7 @@ let aY=new Set([2025]),aH=new Set(["kuca","apartman","vikendica"]);
 let uC=8,cT="bar",exR=null,dT=null,cmpM=false;
 let AD=[],AF={},ZD={},UU={n:"",a:""};
 const fK=n=>n.toLocaleString("bs-BA",{minimumFractionDigits:2,maximumFractionDigits:2})+" KM";
-const fS=n=>n>=1000?(n/1000).toFixed(1).replace(".",",")+"k KM":n.toLocaleString("bs-BA",{minimumFractionDigits:2})+" KM";
+const fS=n=>n.toLocaleString("bs-BA",{minimumFractionDigits:2,maximumFractionDigits:2})+" KM";
 function toast(m,c="#1d4ed8"){const t=document.getElementById("toast");t.textContent=m;t.style.background=c;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);}
 
 let db;
