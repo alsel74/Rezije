@@ -305,14 +305,21 @@ let db;
 function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open("RezijePWA",1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains("store"))e.target.result.createObjectStore("store");};r.onsuccess=e=>{db=e.target.result;res();};r.onerror=rej;});}
 function dbG(k){return new Promise((res,rej)=>{const r=db.transaction("store","readonly").objectStore("store").get(k);r.onsuccess=()=>res(r.result??null);r.onerror=rej;});}
 function dbS(k,v){return new Promise((res,rej)=>{const r=db.transaction("store","readwrite").objectStore("store").put(v,k);r.onsuccess=()=>res();r.onerror=rej;});}
-
 async function initApp(){
-  try{await openDB();AD=(await dbG("data"))||[];AF=(await dbG("afill"))||{};ZD=(await dbG("ziro"))||{};UU=(await dbG("user"))||{n:"",a:""};}
-  catch(e){AD=[];AF={};ZD={};UU={n:"",a:""};}
-  // Popuni year filter u izvještaju
+  try{
+    await openDB();
+    AD=(await dbG("data"))||[];
+    AF=(await dbG("afill"))||{};
+    ZD=(await dbG("ziro"))||{};
+    UU=(await dbG("user"))||{n:"",a:""};
+  }catch(e){
+    console.warn("DB error:",e);
+    AD=[];AF={};ZD={};UU={n:"",a:""};
+  }
+  const lo=document.getElementById("lover");
+  if(lo)lo.style.display="none";
   const ys=document.getElementById("izv-year");
-  YRS.forEach(y=>{const o=document.createElement("option");o.value=y;o.textContent=y;ys.appendChild(o);});
-  document.getElementById("lover").style.display="none";
+  if(ys){YRS.forEach(y=>{const o=document.createElement("option");o.value=y;o.textContent=y;ys.appendChild(o);});}
   refresh();
 }
 const svD=()=>dbS("data",AD);
