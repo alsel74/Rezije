@@ -1,4 +1,4 @@
-const CACHE = 'rezije-v11';
+const CACHE = 'rezije-v14';
 const FILES = ['/Rezije/', '/Rezije/index.html', '/Rezije/manifest.json'];
 
 self.addEventListener('install', e => {
