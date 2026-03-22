@@ -564,7 +564,7 @@ td:last-child{text-align:right;font-family:monospace;font-weight:600}
   html+="</body></html>";
 
   const pa=document.getElementById("print-area");
-  pa.innerHTML=html;pa.style.display="block";
+  pa.style.cssText="display:block;position:fixed;inset:0;background:#fff;z-index:9999;overflow:auto";pa.innerHTML=html;
   setTimeout(()=>{window.print();setTimeout(()=>{pa.style.display="none";pa.innerHTML="";},500);},200);
 }
 
