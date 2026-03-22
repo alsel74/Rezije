@@ -565,7 +565,11 @@ td:last-child{text-align:right;font-family:monospace;font-weight:600}
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
   a.href=url;
-  a.download="Rezije-izvjestaj-"+(fY||"sve")+"-"+(fH||"sve").replace(/\s/g,"")+".html";
+ const blob=new Blob([html],{type:"text/html;charset=utf-8"});
+const url=URL.createObjectURL(blob);
+window.open(url,"_blank");
+setTimeout(()=>URL.revokeObjectURL(url),3000);
+toast("✅ Izvještaj otvoren u novom tabu!");
   document.body.appendChild(a);
   a.click();
   setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1000);
