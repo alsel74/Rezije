@@ -501,7 +501,6 @@ function bizv(){
   sum.innerHTML="<div style='font-size:.82rem;font-weight:700;color:#a5b4fc'>UKUPNO SVE</div><div style='font-family:monospace;font-size:1rem;font-weight:700;color:#a5b4fc'>"+fK(grand)+"</div>";
   body.insertBefore(sum,body.firstChild);
 }
-
 function printIzv(){
   const fY=document.getElementById("izv-year").value;
   const fH=document.getElementById("izv-home").value;
@@ -531,7 +530,6 @@ td:last-child{text-align:right;font-family:monospace;font-weight:600}
 .total-row td{font-weight:700;background:#f0f4ff;border-top:2px solid #ddd}
 .grand{background:#1a1a2e;color:#fff;padding:12px 14px;display:flex;justify-content:space-between;font-weight:700;font-size:12pt;margin-top:20px;border-radius:6px}
 .paid{color:#16a34a}.unpaid{color:#dc2626}.delayed{color:#d97706}
-@media print{@page{size:A4;margin:15mm}body{padding:0}}
 </style></head><body>
 <h1>🏠 Izvještaj režija</h1>
 <div class="subtitle">${title} · Generisano: ${new Date().toLocaleString("bs-BA")}</div>`;
@@ -560,14 +558,19 @@ td:last-child{text-align:right;font-family:monospace;font-weight:600}
     });
   });
 
-  html+=`<div class="grand"><span>UKUPNO SVE</span><span>${fK(grand)}</span></div>`;
-  html+="</body></html>";
+  html+=`<div class="grand"><span>UKUPNO SVE</span><span>${fK(grand)}</span></div></body></html>`;
 
-  const pa=document.getElementById("print-area");
-  pa.style.cssText="display:block;position:fixed;inset:0;background:#fff;z-index:9999;overflow:auto";pa.innerHTML=html;
-  setTimeout(()=>{window.print();setTimeout(()=>{pa.style.display="none";pa.innerHTML="";},500);},200);
+  // Generiši download blob umjesto print
+  const blob=new Blob([html],{type:"text/html;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="Rezije-izvjestaj-"+(fY||"sve")+"-"+(fH||"sve").replace(/\s/g,"")+".html";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1000);
+  toast("✅ Izvještaj preuzet!");
 }
-
 // ── Žiro ─────────────────────────────────────────────────────────────────
 function bziro(){
   const list=document.getElementById("zlist");list.innerHTML="";let lh="";
