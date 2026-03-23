@@ -206,7 +206,7 @@ table.izt tr:last-child td{border-bottom:none}
       <div class="cmsc"><div id="cmtbl"></div></div>
     </div>
     <div class="tsec">
-      <div class="thdr"><div class="ttit">Sve stavke</div><div class="tcnt" id="tcnt"></div></div>
+      <div id="stfilt" style="display:flex;gap:5px;flex-wrap:wrap;padding:0 14px 6px"></div><div class="thdr"><div class="ttit">Sve stavke</div><div class="tcnt" id="tcnt"></div></div>
       <div id="tbody"></div>
     </div>
   </div>
@@ -312,7 +312,7 @@ const SI={"Plaćeno":"✅","Nije plaćeno":"❌","Odloženo":"⏳"};
 let aY=new Set([2026]),aH=new Set(["kuca","Bjelasnica","Hrenovica"]);
 let aU=new Set(UTILS.map(u=>u.id));
 let cT="bar",exR=null,dT=null,cmpM=false;let izvU=new Set(UTILS.map(u=>u.id));
-let AD=[],AF={},ZD={},UU={n:"",a:""};
+let stF="sve";let AD=[],AF={},ZD={},UU={n:"",a:""};
 const fK=n=>n.toLocaleString("bs-BA",{minimumFractionDigits:2,maximumFractionDigits:2})+" KM";
 const fS=n=>n.toLocaleString("bs-BA",{minimumFractionDigits:2,maximumFractionDigits:2})+" KM";
 function toast(m,c="#1d4ed8"){const t=document.getElementById("toast");t.textContent=m;t.style.background=c;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);}
@@ -442,10 +442,10 @@ function bcmp(){
   h+="</tr></tbody></table>";document.getElementById("cmtbl").innerHTML=h;
 }
 
-function btable(f){
+function bstfilt(){const g=document.getElementById("stfilt");if(!g)return;g.innerHTML="";[{id:"sve",label:"Sve",c:"#a5b4fc"},{id:"Plaćeno",label:"✅ Plaćeno",c:"#4ade80"},{id:"Nije plaćeno",label:"❌ Nije plaćeno",c:"#f87171"},{id:"Odloženo",label:"⏳ Odloženo",c:"#fbbf24"}].forEach(o=>{const b=document.createElement("button");const on=stF===o.id;b.style.cssText="padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:600;border:2px solid "+(on?o.c:"transparent")+";background:"+(on?o.c+"22":"var(--card)")+";color:"+(on?o.c:"var(--muted)")+";cursor:pointer";b.textContent=o.label;b.onclick=()=>{stF=o.id;bstfilt();btable(gf());};g.appendChild(b);});}function btable(f){
   const tb=document.getElementById("tbody");tb.innerHTML="";
-  const rows=f.slice().reverse().slice(0,200);
-  document.getElementById("tcnt").textContent=f.length+" stavki";
+  const filt=stF==="sve"?f:f.filter(d=>d.status===stF);const rows=filt.slice().reverse().slice(0,200);
+  document.getElementById("tcnt").textContent=(stF!=="sve"?filt.length+"/"+f.length:f.length)+" stavki";
   if(!rows.length){tb.innerHTML="<div class='empty'><div class='eico'>📭</div><div style='font-weight:600;margin-bottom:6px'>Nema unesenih podataka</div><div style='color:var(--muted)'>Tapni ✏️ Unos gore</div></div>";return;}
   rows.forEach((row,ri)=>{
     const h=HOMES.find(x=>x.id===row.home),u=UTILS.find(x=>x.id===row.util);if(!h||!u)return;
@@ -610,7 +610,7 @@ function sp(p){
   if(p==="izvjestaj"){bizvUgrid();bizv();}
   if(p==="settings")updateBackupInfo();
 }
-function refresh(){bpills();bugrid();const f=gf();bkpi(f);bChart(f);btable(f);if(cmpM)bcmp();}
+function refresh(){bpills();bugrid();const f=gf();bkpi(f);bChart(f);bstfilt();btable(f);if(cmpM)bcmp();}
 window.addEventListener("resize",()=>bChart(gf()));
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 initApp();
