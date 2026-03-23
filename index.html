@@ -245,7 +245,7 @@ table.izt tr:last-child td{border-bottom:none}
         <select id="izv-year" onchange="bizv()" class="izv-sel"><option value="">Sve godine</option></select>
         <select id="izv-home" onchange="bizv()" class="izv-sel"><option value="">Sve nekretnine</option><option>Kuća</option><option>Bjelasnica</option><option>Hrenovica</option></select>
       </div>
-      <button class="izv-pdf-btn" onclick="printIzv()">📥 Izvezi / Otvori PDF</button>
+      <div id="izv-ugrid" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"></div><button class="izv-pdf-btn" onclick="printIzv()">📥 Izvezi / Otvori PDF</button>
       <div id="izv-body"></div>
     </div>
   </div>
@@ -311,7 +311,7 @@ const SC={"Plaćeno":"sp","Nije plaćeno":"su","Odloženo":"sd"};
 const SI={"Plaćeno":"✅","Nije plaćeno":"❌","Odloženo":"⏳"};
 let aY=new Set([2026]),aH=new Set(["kuca","Bjelasnica","Hrenovica"]);
 let aU=new Set(UTILS.map(u=>u.id));
-let cT="bar",exR=null,dT=null,cmpM=false;
+let cT="bar",exR=null,dT=null,cmpM=false;let izvU=new Set(UTILS.map(u=>u.id));
 let AD=[],AF={},ZD={},UU={n:"",a:""};
 const fK=n=>n.toLocaleString("bs-BA",{minimumFractionDigits:2,maximumFractionDigits:2})+" KM";
 const fS=n=>n.toLocaleString("bs-BA",{minimumFractionDigits:2,maximumFractionDigits:2})+" KM";
@@ -487,13 +487,13 @@ async function addRow(){
   toast("✅ Račun dodat!");sp("dashboard");refresh();
 }
 
-function bizv(){
+function bizvUgrid(){const g=document.getElementById("izv-ugrid");if(!g)return;g.innerHTML="";UTILS.forEach(u=>{const on=izvU.has(u.id);const btn=document.createElement("div");btn.className="uchk"+(on?" on":"");btn.style.color=u.color;btn.style.background=on?u.bg:u.bg.replace("22","11");btn.innerHTML=u.icon+" "+u.label;btn.onclick=()=>{if(izvU.has(u.id)){if(izvU.size>1)izvU.delete(u.id);}else izvU.add(u.id);bizvUgrid();bizv();};g.appendChild(btn);});}function bizv(){
   const body=document.getElementById("izv-body");body.innerHTML="";
   const fY=document.getElementById("izv-year").value;
   const fH=document.getElementById("izv-home").value;
   let rows=AD.slice();
   if(fY)rows=rows.filter(r=>r.year===+fY);
-  if(fH)rows=rows.filter(r=>HOMES.find(h=>h.id===r.home)?.label===fH);
+  if(fH)rows=rows.filter(r=>HOMES.find(h=>h.id===r.home)?.label===fH);rows=rows.filter(r=>izvU.has(r.util));
   if(!rows.length){body.innerHTML="<div class='empty'><div class='eico'>📭</div><div style='font-weight:600'>Nema podataka</div></div>";return;}
   const grand=rows.reduce((s,r)=>s+r.amount,0);
   const sum=document.createElement("div");
@@ -528,7 +528,7 @@ function printIzv(){
   const fH=document.getElementById("izv-home").value;
   let rows=AD.slice();
   if(fY)rows=rows.filter(r=>r.year===+fY);
-  if(fH)rows=rows.filter(r=>HOMES.find(h=>h.id===r.home)?.label===fH);
+  if(fH)rows=rows.filter(r=>HOMES.find(h=>h.id===r.home)?.label===fH);rows=rows.filter(r=>izvU.has(r.util));
   if(!rows.length){toast("❌ Nema podataka","#991b1b");return;}
   const title=(fY||"Sve godine")+" · "+(fH||"Sve nekretnine");
   const grand=rows.reduce((s,r)=>s+r.amount,0);
@@ -607,7 +607,7 @@ function sp(p){
   document.getElementById("sa").scrollTop=0;
   if(p==="ziro")bziro();
   if(p==="unos")ofc();
-  if(p==="izvjestaj")bizv();
+  if(p==="izvjestaj"){bizvUgrid();bizv();}
   if(p==="settings")updateBackupInfo();
 }
 function refresh(){bpills();bugrid();const f=gf();bkpi(f);bChart(f);btable(f);if(cmpM)bcmp();}
