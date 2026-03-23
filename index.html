@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bs">
 <head>
@@ -156,7 +155,7 @@ table.izt tr:last-child td{border-bottom:none}
 .toast.show{opacity:1}
 ::-webkit-scrollbar{width:0;height:0}
 @keyframes slideup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.trow{animation:slideup .16s ease both}
+.trow{animation:slideup .16s ease both}.dedup-over{display:none;position:fixed;inset:0;background:#000b;z-index:500;align-items:flex-end;justify-content:center}.dedup-over.open{display:flex}.dedup-box{background:var(--card);border-radius:20px 20px 0 0;padding:22px 18px calc(22px + var(--safe-bot));width:100%;border-top:1px solid #f87171}
 @media print{body>*{display:none!important}.uover{display:flex!important;position:fixed!important;inset:0!important;background:#fff!important;padding:0!important;align-items:center!important;justify-content:center!important}.ubox{max-height:none!important}.utbar{display:none!important}@page{size:A4 portrait;margin:15mm}}
 </style>
 </head>
@@ -254,7 +253,7 @@ table.izt tr:last-child td{border-bottom:none}
   <!-- BACKUP -->
   <div class="page" id="page-settings">
     <div style="padding:14px">
-      <div class="slbl" style="margin-bottom:12px">⚙️ BACKUP I RESTORE</div>
+      <div class="slbl" style="margin-bottom:12px">⚙️ BACKUP I RESTORE</div><div style="background:#f871711a;border:1px solid #f8717144;border-radius:14px;padding:14px;margin-bottom:12px"><div style="font-size:.85rem;font-weight:700;margin-bottom:4px;color:#f87171">🔄 Ukloni duplikate</div><div style="font-size:.75rem;color:var(--muted);margin-bottom:6px;line-height:1.5">Ako si slucajno importovao backup i podaci su se udvostručili, ovo uklanja duplikate.<br><strong style="color:#fbbf24">Preporuka: backup prije!</strong></div><div style="font-size:.72rem;font-family:monospace;color:#a5b4fc;margin-bottom:8px" id="dedup-preview"></div><button onclick="askDedup()" style="width:100%;padding:12px;background:linear-gradient(135deg,#7f1d1d,#991b1b);border:none;border-radius:10px;color:#fca5a5;font-size:.9rem;font-weight:700;cursor:pointer">🔄 Pronadi i ukloni duplikate</button></div>
       <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px">
         <div style="font-size:.85rem;font-weight:700;margin-bottom:6px">📥 Export podataka</div>
         <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px">Sačuvaj sve podatke kao JSON fajl na telefon. Radi to redovno!</div>
@@ -282,7 +281,7 @@ table.izt tr:last-child td{border-bottom:none}
 
 </div><!-- /sa -->
 
-<!-- Delete modal -->
+<div class="mover dedup-over" id="dedupMod"><div class="dedup-box"><div class="mbt" style="color:#f87171">🔄 Potvrdi uklanjanje duplikata</div><div class="mbs" id="dedup-msg">Pronađeni su duplikati. Nastaviti?</div><div class="mbbtns"><button class="mbc" onclick="closeDedupMod()">Odustani</button><button class="mbx" onclick="confirmDedup()">Da, ukloni</button></div></div></div><div class="mover dedup-over" id="dedupMod"><div class="dedup-box"><div class="mbt" style="color:#f87171">🔄 Potvrdi uklanjanje duplikata</div><div class="mbs" id="dedup-msg">Pronađeni su duplikati. Nastaviti?</div><div class="mbbtns"><button class="mbc" onclick="closeDedupMod()">Odustani</button><button class="mbx" onclick="confirmDedup()">Da, ukloni</button></div></div></div><!-- Delete modal -->
 <div class="mover" id="dmod">
   <div class="mbox">
     <div class="mbt">🗑 Obriši stavku?</div>
@@ -345,7 +344,7 @@ const svZD=()=>dbS("ziro",ZD);
 async function sud(){UU={n:document.getElementById("uun")?document.getElementById("uun").value:"",a:document.getElementById("uua")?document.getElementById("uua").value:""};await dbS("user",UU);}
 
 // Export/Import
-function exportData(){
+function countDups(){const seen=new Set();let dups=0;AD.forEach(d=>{const key=[d.home,d.util,d.year,d.month,String(d.amount)].join("|");if(seen.has(key))dups++;else seen.add(key);});return dups;}function askDedup(){const dups=countDups();const prev=document.getElementById("dedup-preview");if(dups===0){toast("Nema duplikata!","#059669");if(prev)prev.textContent="Stavki: "+AD.length+" - Duplikata: 0";return;}document.getElementById("dedup-msg").textContent="Pronađeno "+dups+" duplikata od "+AD.length+" stavki. Ostat ce "+(AD.length-dups)+". Nastaviti?";document.getElementById("dedupMod").classList.add("open");}function closeDedupMod(){document.getElementById("dedupMod").classList.remove("open");}async function confirmDedup(){closeDedupMod();const before=AD.length;const seen=new Set();AD=AD.filter(d=>{const key=[d.home,d.util,d.year,d.month,String(d.amount)].join("|");if(seen.has(key))return false;seen.add(key);return true;});AD.forEach((d,i)=>d.id=i+1);await svD();const removed=before-AD.length;refresh();updateBackupInfo();toast("Uklonjeno "+removed+" duplikata!","#059669");}function exportData(){
   const data={AD,AF,ZD,UU,exported:new Date().toISOString(),version:1};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
   const url=URL.createObjectURL(blob);
