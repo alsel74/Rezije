@@ -183,7 +183,7 @@ table.izt tr:last-child td{border-bottom:none}
     <div class="ntab" id="nav-unos" onclick="sp('unos')"><div class="ti">✏️</div><div>Unos</div></div>
     <div class="ntab" id="nav-ziro" onclick="sp('ziro')"><div class="ti">💳</div><div>Žiro</div></div>
     <div class="ntab" id="nav-izvjestaj" onclick="sp('izvjestaj')"><div class="ti">📄</div><div>Izvještaj</div></div>
-  </div>
+    <div class="ntab" id="nav-settings" onclick="sp('settings')"><div class="ti">⚙️</div><div>Backup</div></div>  </div>
 </div>
 
 <div class="sa" id="sa">
@@ -264,9 +264,26 @@ table.izt tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- Delete modal -->
-<div class="mover" id="dmod">
-  <div class="mbox">
+<div class="page" id="page-settings">
+  <div style="padding:14px">
+    <div class="slbl" style="margin-bottom:12px">⚙️ BACKUP I RESTORE</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:.85rem;font-weight:700;margin-bottom:6px">📥 Export podataka</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px">Sačuvaj sve podatke kao JSON fajl</div>
+      <button onclick="exportData()" style="width:100%;padding:12px;background:linear-gradient(135deg,#059669,#0d9488);border:none;border-radius:10px;color:#fff;font-size:.9rem;font-weight:700;cursor:pointer">📥 Exportuj backup</button>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px">
+      <div style="font-size:.85rem;font-weight:700;margin-bottom:6px">📤 Import podataka</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px">Učitaj podatke iz JSON backup fajla</div>
+      <label style="width:100%;display:block;padding:12px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);border:none;border-radius:10px;color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;text-align:center">
+        📤 Importuj backup
+        <input type="file" accept=".json" style="display:none" onchange="importData(this.files[0])">
+      </label>
+    </div>
+  </div>
+</div>
+  div class="mover" id="dmod">
+   <div class="mbox">
     <div class="mbt">🗑 Obriši stavku?</div>
     <div class="mbs">Ova akcija se ne može poništiti.</div>
     <div class="mbbtns"><button class="mbc" onclick="cmod()">Odustani</button><button class="mbx" onclick="cdel()">Obriši</button></div>
@@ -632,10 +649,28 @@ function printUplat(){
   pa.style.display="block";
   setTimeout(()=>{window.print();setTimeout(()=>{pa.style.display="none";pa.innerHTML="";},500);},200);
 }
-
-function sp(p){
-  document.querySelectorAll(".page").forEach(el=>el.classList.remove("active"));
-  document.querySelectorAll(".ntab").forEach(el=>el.classList.remove("active"));
+  function exportData(){
+  const data={AD,AF,ZD,UU,exported:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="Rezije-backup-"+new Date().toISOString().slice(0,10)+".json";
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1000);
+  toast("✅ Backup sačuvan!");
+}
+async function importData(file){
+  try{
+    const text=await file.text();
+    const data=JSON.parse(text);
+    if(!data.AD)throw new Error("Neispravan fajl");
+    AD=data.AD||[];AF=data.AF||{};ZD=data.ZD||{};UU=data.UU||{n:"",a:""};
+    await svD();await svAF();await svZD();await dbS("user",UU);
+    toast("✅ Podaci uvezeni! "+AD.length+" stavki.");
+    refresh();
+  }catch(e){toast("❌ Greška: "+e.message,"#991b1b");}
+}
+  function sp(p){  document.querySelectorAll(".ntab").forEach(el=>el.classList.remove("active"));
   document.getElementById("page-"+p).classList.add("active");
   document.getElementById("nav-"+p).classList.add("active");
   document.getElementById("sa").scrollTop=0;
