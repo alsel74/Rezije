@@ -216,7 +216,7 @@ table.izt tr:last-child td{border-bottom:none}
     <div class="asec"><div class="acard">
       <div class="ahdr">✏️ Novi račun</div>
       <div class="aform"><div class="fgrid">
-        <div class="fi"><label>Nekretnina</label><select id="fh" onchange="ofc()"><option>Kuća</option><option>Apartman</option><option>Hrenovica</option></select></div>
+        <div class="fi"><label>Nekretnina</label><select id="fh" onchange="ofc()"><option>Kuća</option><option></option><option>Hrenovica</option></select></div>
         <div class="fi"><label>Vrsta režije</label><select id="fu" onchange="ofc()"><option>Struja</option><option>Voda</option><option>Telemach</option><option>BH Telecom</option><option>DSC</option><option>OKI</option><option>Komunalno</option><option>Ostalo</option></select></div>
         <div class="fi"><label>Mjesec</label><select id="fm"><option value="0">Januar</option><option value="1">Februar</option><option value="2">Mart</option><option value="3">April</option><option value="4">Maj</option><option value="5">Juni</option><option value="6">Juli</option><option value="7">August</option><option value="8">Septembar</option><option value="9">Oktobar</option><option value="10">Novembar</option><option value="11">Decembar</option></select></div>
         <div class="fi"><label>Godina</label><select id="fy"><option>2024</option><option>2025</option><option selected>2026</option><option>2027</option><option>2028</option><option>2029</option><option>2030</option></select></div>
@@ -243,7 +243,7 @@ table.izt tr:last-child td{border-bottom:none}
       <div class="slbl" style="margin-bottom:10px">📄 IZVJEŠTAJ TROŠKOVA</div>
       <div style="display:flex;gap:8px;margin-bottom:10px">
         <select id="izv-year" onchange="bizv()" class="izv-sel"><option value="">Sve godine</option></select>
-        <select id="izv-home" onchange="bizv()" class="izv-sel"><option value="">Sve nekretnine</option><option>Kuća</option><option>Apartman</option><option>Hrenovica</option></select>
+        <select id="izv-home" onchange="bizv()" class="izv-sel"><option value="">Sve nekretnine</option><option>Kuća</option><option></option><option>Hrenovica</option></select>
       </div>
       <button class="izv-pdf-btn" onclick="printIzv()">📥 Izvezi / Otvori PDF</button>
       <div id="izv-body"></div>
@@ -301,15 +301,15 @@ table.izt tr:last-child td{border-bottom:none}
 <div class="toast" id="toast"></div>
 
 <script>
-const HOMES=[{id:"kuca",label:"Kuća",icon:"🏠",cls:"kuca",color:"#3b82f6"},{id:"apartman",label:"Apartman",icon:"🏡",cls:"apart",color:"#22c55e"},{id:"Hrenovica",label:"Hrenovica",icon:"🌲",cls:"viken",color:"#a855f7"}];
+const HOMES=[{id:"kuca",label:"Kuća",icon:"🏠",cls:"kuca",color:"#3b82f6"},{id:"Bjelasnica",label:"Bjelasnica",icon:"🏡",cls:"apart",color:"#22c55e"},{id:"Hrenovica",label:"Hrenovica",icon:"🌲",cls:"viken",color:"#a855f7"}];
 const UTILS=[{id:"struja",label:"Struja",icon:"⚡",color:"#fbbf24",bg:"#fbbf2422"},{id:"voda",label:"Voda",icon:"💧",color:"#38bdf8",bg:"#38bdf822"},{id:"telemach",label:"Telemach",icon:"📡",color:"#f87171",bg:"#f8717122"},{id:"bht",label:"BH Telecom",icon:"📞",color:"#c084fc",bg:"#c084fc22"},{id:"dsc",label:"DSC",icon:"🔒",color:"#fb923c",bg:"#fb923c22"},{id:"oki",label:"OKI",icon:"🏢",color:"#2dd4bf",bg:"#2dd4bf22"},{id:"komunal",label:"Komunalno",icon:"🏘",color:"#4ade80",bg:"#4ade8022"},{id:"ostalo",label:"Ostalo",icon:"📋",color:"#94a3b8",bg:"#94a3b822"}];
-const ZRF=[{home:"Kuća",util:"struja",firm:"Elektroprivreda BiH"},{home:"Kuća",util:"voda",firm:"ViK / Vodovod"},{home:"Kuća",util:"telemach",firm:"Telemach d.o.o."},{home:"Kuća",util:"bht",firm:"BH Telecom d.d."},{home:"Kuća",util:"dsc",firm:"DSC d.o.o."},{home:"Kuća",util:"komunal",firm:"Komunalno preduzeće"},{home:"Apartman",util:"struja",firm:"Elektroprivreda BiH"},{home:"Apartman",util:"voda",firm:"ViK / Vodovod"},{home:"Apartman",util:"komunal",firm:"Komunalno preduzeće"},{home:"Apartman",util:"oki",firm:"OKI d.o.o."},{home:"Apartman",util:"bht",firm:"BH Telecom d.d."},{home:"Hrenovica",util:"struja",firm:"Elektroprivreda BiH"},{home:"Hrenovica",util:"voda",firm:"ViK lokalni"},{home:"Hrenovica",util:"komunal",firm:"Lokalno komunalno"},{home:"Hrenovica",util:"bht",firm:"BH Telecom d.d."}];
+const ZRF=[{home:"Kuća",util:"struja",firm:"Elektroprivreda BiH"},{home:"Kuća",util:"voda",firm:"ViK / Vodovod"},{home:"Kuća",util:"telemach",firm:"Telemach d.o.o."},{home:"Kuća",util:"bht",firm:"BH Telecom d.d."},{home:"Kuća",util:"dsc",firm:"DSC d.o.o."},{home:"Kuća",util:"komunal",firm:"Komunalno preduzeće"},{home:"Bjelasnica",util:"struja",firm:"Elektroprivreda BiH"},{home:"Bjelasnica",util:"voda",firm:"ViK / Vodovod"},{home:"Bjelasnica",util:"komunal",firm:"Komunalno preduzeće"},{home:"Bjelasnica",util:"oki",firm:"OKI d.o.o."},{home:"Bjelasnica",util:"bht",firm:"BH Telecom d.d."},{home:"Hrenovica",util:"struja",firm:"Elektroprivreda BiH"},{home:"Hrenovica",util:"voda",firm:"ViK lokalni"},{home:"Hrenovica",util:"komunal",firm:"Lokalno komunalno"},{home:"Hrenovica",util:"bht",firm:"BH Telecom d.d."}];
 const MS=["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Aug","Sep","Okt","Nov","Dec"];
 const MF=["Januar","Februar","Mart","April","Maj","Juni","Juli","August","Septembar","Oktobar","Novembar","Decembar"];
 const YRS=[2024,2025,2026,2027,2028,2029,2030];
 const SC={"Plaćeno":"sp","Nije plaćeno":"su","Odloženo":"sd"};
 const SI={"Plaćeno":"✅","Nije plaćeno":"❌","Odloženo":"⏳"};
-let aY=new Set([2026]),aH=new Set(["kuca","apartman","Hrenovica"]);
+let aY=new Set([2026]),aH=new Set(["kuca","Bjelasnica","Hrenovica"]);
 let aU=new Set(UTILS.map(u=>u.id));
 let cT="bar",exR=null,dT=null,cmpM=false;
 let AD=[],AF={},ZD={},UU={n:"",a:""};
@@ -394,7 +394,7 @@ function bpills(){
   const yc=document.getElementById("ypills");yc.innerHTML="";
   YRS.forEach(y=>{const b=document.createElement("button");const on=aY.has(y);b.className="pill py"+(on?" active":"");b.textContent=(on?"✓ ":"")+y;b.onclick=()=>{if(aY.has(y)){if(aY.size>1)aY.delete(y);}else aY.add(y);refresh();};yc.appendChild(b);});
   const hc=document.getElementById("hpills");hc.innerHTML="";
-  HOMES.forEach(h=>{const b=document.createElement("button");const on=aH.has(h.id);const pc=h.id==="kuca"?"pk":h.id==="apartman"?"pa":"pv";b.className="pill "+pc+(on?" active":"");b.textContent=h.icon+" "+h.label;b.onclick=()=>{if(aH.has(h.id)){if(aH.size>1)aH.delete(h.id);}else aH.add(h.id);refresh();};hc.appendChild(b);});
+  HOMES.forEach(h=>{const b=document.createElement("button");const on=aH.has(h.id);const pc=h.id==="kuca"?"pk":h.id==="Bjelasnica"?"pa":"pv";b.className="pill "+pc+(on?" active":"");b.textContent=h.icon+" "+h.label;b.onclick=()=>{if(aH.has(h.id)){if(aH.size>1)aH.delete(h.id);}else aH.add(h.id);refresh();};hc.appendChild(b);});
 }
 function bugrid(){
   const g=document.getElementById("ugrid");g.innerHTML="";
